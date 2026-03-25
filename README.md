@@ -1,0 +1,32 @@
+# Splunk SOC Detection Lab – Threat Investigation (BOTS v3)
+
+## Project Overview
+This project simulates real-world SOC (Security Operations Center) analysis using Splunk and the BOTS v3 dataset. The goal was to identify abnormal web activity, investigate suspicious behavior, and break down attacker patterns using SPL queries and dashboards.
+
+Rather than just visualizing logs, this project focuses on how an analyst would think through detection, investigation, and validation of potential threats.
+
+---
+
+## Key Investigation
+
+### 🚨 Suspicious Activity Identified
+While analyzing web traffic logs, I identified a high volume of HTTP 404 errors originating from a single internal host:
+
+- **IP Address:** 172.16.0.149  
+- **Behavior:** Repeated requests to non-existent resources  
+
+This pattern is commonly associated with:
+- Directory enumeration  
+- Automated scanning tools  
+- Reconnaissance attempts  
+
+---
+
+### 📊 Detection Approach
+
+To isolate suspicious behavior, I used SPL queries to filter and analyze error responses:
+
+```spl
+index=botsv3 sourcetype=access_combined status=404
+| stats count by clientip
+| sort - count
